@@ -38,17 +38,91 @@ class Map {
   }
 }
 
+class Player {
+  constructor() {
+    this.x = WINDOW_WIDTH / 2;
+    this.y = WINDOW_HEIGHT / 2;
+    this.radius = 5;
+    this.turnDirection = 0;
+    this.walkDirection = 0;
+    this.rotationAngle = Math.PI / 2;
+    this.moveSpeed = 3;
+    this.turnSpeed = 2 * (Math.PI / 180);
+  }
+
+  update() {
+    this.rotationAngle += this.turnDirection * this.turnSpeed
+
+    var moveStep = this.walkDirection * this.moveSpeed
+
+    this.x += moveStep * Math.cos(this.rotationAngle) 
+    this.y += moveStep * Math.sin(this.rotationAngle)
+  }
+
+  render() {
+    noStroke()
+    fill('red')
+    circle(this.x, this.y, this.radius)
+    stroke('red')
+    line(
+      this.x,
+      this.y,
+      this.x + Math.cos(this.rotationAngle) * 40,
+      this.y + Math.sin(this.rotationAngle) * 40
+    )
+  }
+}
+
 var grid = new Map();
+var player = new Player();
+
+function keyPressed() {
+  if (keyCode === UP_ARROW) {
+    player.walkDirection = 1
+  }
+
+  if (keyCode === DOWN_ARROW) {
+    player.walkDirection = -1
+  }
+
+  if (keyCode === LEFT_ARROW) {
+    player.turnDirection = 1
+  }
+
+  if (keyCode === RIGHT_ARROW) {
+    player.turnDirection = -1
+  }
+}
+
+function keyReleased() {
+  if (keyCode === UP_ARROW) {
+    player.walkDirection = 0 
+  }
+
+  if (keyCode === DOWN_ARROW) {
+    player.walkDirection = 0
+  }
+
+  if (keyCode === LEFT_ARROW) {
+    player.turnDirection = 0
+  }
+
+  if (keyCode === RIGHT_ARROW) {
+    player.turnDirection = 0
+  }
+}
 
 function setup() {
   createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT)
 }
 
 function update() {
-  // todo: updtate all game objects before render the next frame
+  player.update();
 }
 
 function draw() {
   update()
+
   grid.render()
+  player.render();
 }
