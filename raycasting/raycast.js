@@ -4,6 +4,10 @@ const MAP_NUM_COLLUMNS = 15
 
 const WINDOW_WIDTH = MAP_NUM_COLLUMNS * TILE_SIZE
 const WINDOW_HEIGHT = MAP_NUM_ROWS * TILE_SIZE
+const FOV_ANGLE = 60 * (Math.PI / 180)
+
+const WALL_STRIP_WIDTH = 10
+const NUMBER_OF_RAYS = WINDOW_WIDTH / WALL_STRIP_WIDTH
 
 class Map {
   constructor () {
@@ -85,8 +89,44 @@ class Player {
   }
 }
 
+class Ray {
+  constructor(rayAngle, x, y) {
+    this.rayAngle = rayAngle
+    this.x = x
+    this.y = y
+  }
+
+  render() {
+    stroke('green')
+    line(
+      player.x,
+      player.y,
+      player.x + Math.cos(this.rayAngle) * 30,
+      player.y + Math.sin(this.rayAngle) * 30
+    )
+  }
+}
+
 var grid = new Map();
 var player = new Player();
+var rays = [];
+
+
+function castAllRays() {
+  let columnID = 0
+
+  let rayAngle = player.rotationAngle - (FOV_ANGLE / 2)
+  rays = []
+
+  for (let i = 0; i < 1; i++) {
+    const ray = new Ray(rayAngle)
+
+    rays.push(ray)
+
+    rayAngle += FOV_ANGLE / NUMBER_OF_RAYS
+    columnID++
+  }
+}
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
@@ -130,11 +170,17 @@ function setup() {
 
 function update() {
   player.update();
+  castAllRays()
 }
 
 function draw() {
   update()
 
   grid.render()
+
+  for (ray of rays) {
+    ray.render()
+  }
+
   player.render();
 }
