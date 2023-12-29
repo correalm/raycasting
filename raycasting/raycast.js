@@ -36,6 +36,13 @@ class Map {
       }
     }
   }
+
+  isWall(x, y) {
+    const collumn = Math.floor(x / TILE_SIZE)
+    const row = Math.floor(y / TILE_SIZE)
+
+    return this.grid[ row ][ collumn ] === 1
+  }
 }
 
 class Player {
@@ -55,8 +62,13 @@ class Player {
 
     var moveStep = this.walkDirection * this.moveSpeed
 
-    this.x += moveStep * Math.cos(this.rotationAngle) 
-    this.y += moveStep * Math.sin(this.rotationAngle)
+    const x = this.x + (moveStep * Math.cos(this.rotationAngle))
+    const y = this.y + (moveStep * Math.sin(this.rotationAngle))
+
+    if (grid.isWall(x, y)) return
+
+    this.x = x 
+    this.y = y
   }
 
   render() {
